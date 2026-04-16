@@ -1,8 +1,40 @@
 # 基于深度学习的中药领域用户评价情感分类实践
 
-## 📖 项目背景
-本项目旨在处理中药电商场景下的真实长短文本评价数据（逾 21 万条）。由于真实的业务数据呈现极度的正负样本不平衡分布（Positive 样本占主导），常规模型极易产生预测偏移并陷入**过拟合**。本项目通过对比不同深度的网络架构，探索模型在长尾非平衡数据下的特征提取能力与泛化表现。
+## 📊 数据集说明与声明
 
+本项目使用的核心训练数据 `herbal_sentiment_train.csv` 包含逾 21 万条真实的中药垂直领域评价。
+
+* **数据来源**：下载自 Hugging Face 开源数据集 [OpenModels/Chinese-Herbal-Medicine-Sentiment]。
+* **数据格式**：经过脱敏与预处理，数据仅保留了 `review_text` (评价文本) 与 `sentiment_label` (情感倾向) 两个核心字段。
+* **⚠️ 免责声明 (Disclaimer)**： 本项目所涉及的数据集、预训练模型权重及相关代码，仅供学术研究、技术交流与个人学习使用，严禁用于任何商业用途。数据来源于公开网络，若相关数据或文本侵犯了您的合法权益，请提请 Issue 或联系作者，我们将第一时间进行删除处理。
+
+## 📖 项目背景
+
+本项目旨在处理中药电商场景下的真实长短文本评价数据（逾 21 万条）。由于真实的业务数据呈现极度的正负样本不平衡分布（Positive 样本占主导），常规模型极易产生预测偏移并陷入过拟合。本项目通过对比不同深度的网络架构，探索模型在长尾非平衡数据下的特征提取能力与泛化表现。
+
+## 📦 模型下载与调用
+
+本项目的完整 BERT 模型权重（基于 `bert-base-chinese` 微调）已开源至 Hugging Face，你可以直接通过 `transformers` 库一键调用：
+
+* **Hugging Face 仓库地址**: [https://huggingface.co/1hugh/Herbal-Sentiment-BERT](https://huggingface.co/1hugh/Herbal-Sentiment-BERT)
+
+**Python 快速调用代码**:
+```python
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+
+# 加载分词器和模型
+tokenizer = AutoTokenizer.from_pretrained("1hugh/Herbal-Sentiment-BERT")
+model = AutoModelForSequenceClassification.from_pretrained("1hugh/Herbal-Sentiment-BERT")
+
+# 准备测试文本
+text = "这当归发霉了，味道极差！"
+inputs = tokenizer(text, return_tensors="pt")
+
+# 进行情感预测
+outputs = model(**inputs)
+print(outputs.logits.argmax().item()) 
+# 输出结果对应: 0:负面, 1:中立, 2:正面
+```
 ## 🛠️ 技术路线与对比实验
 本项目未直接依赖高度封装的 API，而是通过对比两套经典架构，验证不同**归纳偏置（Inductive Bias）**对文本情感分析的影响：
 
