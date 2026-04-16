@@ -32,7 +32,7 @@ inputs = tokenizer(text, return_tensors="pt")
 outputs = model(**inputs)
 print(outputs.logits.argmax().item()) 
 # 输出结果对应: 0:负面, 1:中立, 2:正面
-
+```
 ## 🛠️ 技术路线与对比实验
 本项目未直接依赖高度封装的 API，而是通过对比两套经典架构，验证不同**归纳偏置（Inductive Bias）**对文本情感分析的影响：
 
